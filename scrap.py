@@ -6,6 +6,7 @@ from termcolor import colored
 
 page = open('ru - bgp.he.net.html')
 soup = BeautifulSoup(page,'html.parser')
+listFile = open("list.txt","a")
 
 allRows = soup.find_all('tr')
 counter = 0
@@ -21,3 +22,6 @@ for row in allRows:
         print(colored(flag+' '+ip,'red'))
     else:
         print(colored(flag+' '+ip,'green'))
+        listFile.write('"'+ip+'" ')
+
+listFile.close()
