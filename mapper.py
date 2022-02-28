@@ -10,6 +10,7 @@ listFile = open("list.txt","r")
 ipNets = listFile.read().split(' ')
 listFile.close()
 outputFile = open("output.txt","w")
+outputFile.close()
 count = len(ipNets)
 for k in ipNets:
     ipList = []
@@ -32,12 +33,12 @@ for k in ipNets:
                 print(colored(output.strip(),"red"))
             else:
                 print(colored(output.strip(),"green"))
-                findPort = re.findall(r"{mapPort}/tcp   open",output)
+                findPort = re.findall(r"%s/tcp" % mapPort,output)
                 if bool(findPort): 
                     print(colored('Found '+mapPort+' here',"blue"))
-                    outputFile.write(ipList[i])
-
+                    outputFile = open("output.txt","a")
+                    outputFile.write(str(ipList[i])+" ")
+                    outputFile.close()
             if return_code is not None:
                 break
 
-outputFile.close()
