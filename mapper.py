@@ -11,7 +11,7 @@ def runIP(args,fileName):
         try:
             stdout, stderr = shell.communicate(timeout=30)
         except:
-            print("["+colored("SHELL","yellow")+"]"+colored("BROKE DUE TO TIMEOUT","red"))
+            print("["+colored("SHELL","yellow")+"]["+colored(args,"yellow")+"]"+colored("BROKE DUE TO TIMEOUT","red"))
             #continue
         while True:
             return_code = shell.poll()
@@ -19,18 +19,16 @@ def runIP(args,fileName):
             downDetector = re.findall(r'Host seems down.',output)
             if bool(downDetector):
                 #print(colored(output.strip(),"red"))
-                print("["+colored("NMAP","yellow")+"]["+colored("HOSTERR","red")+"]")
-                print("-----")
+                print("["+colored("NMAP","yellow")+"]["+colored(args,"yellow")+"]["+colored("HOSTERR","red")+"]")
             else:
-                print("["+colored("OK","green")+"]["+colored("IP","yellow")+"]time taken for execution "+str(time.time()-subnetTime)+"s")
+                print("["+colored("OK","green")+"]["+colored(args,"yellow")+"]time taken for execution "+str(time.time()-subnetTime)+"s")
                 #print(colored(output.strip(),"green"))
                 findPort = re.findall(r"%s/tcp" % mapPort,output)
                 if bool(findPort): 
-                    print("["+colored("NMAP","yellow")+"]"+colored('Found '+mapPort+' here',"blue"))
+                    print("["+colored("NMAP","yellow")+"]["+colored(args,"yellow")+"]"+colored('Found '+mapPort+' here',"blue"))
                     outputFile = open(fileName,"a")
                     outputFile.write(str(ipList[i])+" ")
                     outputFile.close()
-                print("-----")
             if return_code is not None:
                 break
 
@@ -62,7 +60,10 @@ for k in ipNets:
         except:
             print(colored("THREAD ERROR","read"))
         time.sleep(0.33)
-
+    time.sleep(5)
+    print("------------------------")
     print("["+colored("mapper.py","yellow")+"]["+colored("PROGRESS","yellow")+"]" + colored(str(progress/count*100),"blue") + colored("%","blue"))
-    print("["+colored("OK","green")+"]["+colored("SUBNET","yellow")+"]time taken for execution "+str(time.time()-subnetTime)+"s")
+    print("["+colored("OK","green")+"]["+colored("SUBNET","yellow")+"]["+colored(k,"yellow")+"] "+str((time.time()-subnetTime)/60)+"m")
+    print("------------------------")
+    time.sleep(5) 
 print("["+colored("OK","green")+"]["+colored("mapper.py","yellow")+"] time taken for execution "+str(time.time()-startTime)+"s")
