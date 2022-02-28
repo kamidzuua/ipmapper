@@ -1,9 +1,10 @@
 import sys
 import time
 import requests
+import time
 from bs4 import BeautifulSoup
 from termcolor import colored
-
+startTime = time.time()
 page = open('ru - bgp.he.net.html')
 soup = BeautifulSoup(page,'html.parser')
 listFile = open("list.txt","w")
@@ -25,3 +26,5 @@ for row in allRows:
         listFile.write(ip+' ')
 
 listFile.close()
+
+print("["+colored("OK","green")+"]["+colored("scrap.py","yellow")+"] time taken for execution "+(str(time.time()-startTime))+"s")

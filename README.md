@@ -12,8 +12,8 @@ That output file can be used for DDoS using simple bash scripts.
 
 ### requirements
 ```python
-termcolor
-bs4
+from termcolor import colored 
+from bs4 import BeautifulSoup
 ```
 
 ### usage
