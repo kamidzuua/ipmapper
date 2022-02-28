@@ -5,11 +5,11 @@ import re
 
 print(colored("Which port you are looking for?","yellow"))
 mapPort = input()
-
+fileName = "output"+mapPort+".txt"
 listFile = open("list.txt","r")
 ipNets = listFile.read().split(' ')
 listFile.close()
-outputFile = open("output.txt","w")
+outputFile = open(fileName,"w")
 outputFile.close()
 count = len(ipNets)
 for k in ipNets:
@@ -36,7 +36,7 @@ for k in ipNets:
                 findPort = re.findall(r"%s/tcp" % mapPort,output)
                 if bool(findPort): 
                     print(colored('Found '+mapPort+' here',"blue"))
-                    outputFile = open("output.txt","a")
+                    outputFile = open(fileName,"a")
                     outputFile.write(str(ipList[i])+" ")
                     outputFile.close()
             if return_code is not None:
