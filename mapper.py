@@ -18,6 +18,7 @@ progress = 0
 
 for k in ipNets:
     progress+=1
+    progressIP = 0
     subnetTime=time.time()
     ipList = []
     for ip in ipaddress.IPv4Network(k):
@@ -26,6 +27,7 @@ for k in ipNets:
     print("["+colored("OK","green")+"]["+colored("SUBNET","yellow")+"]time taken for execution "+str(time.time()-subnetTime)+"s")
     for i in range(0,len(ipList)):    
         args = str(ipList[i])
+        progressIP+=1
         print("["+colored("mapper.py","yellow")+"]["+colored("EXEC","yellow")+"]"+colored(" nmap "+args,"green"))
         shell = subprocess.Popen(['nmap',args] ,stdout=subprocess.PIPE,stderr=subprocess.PIPE,universal_newlines=True)
         try:
@@ -38,15 +40,20 @@ for k in ipNets:
             output = stdout
             downDetector = re.findall(r'Host seems down.',output)
             if bool(downDetector):
-                print(colored(output.strip(),"red"))
+                #print(colored(output.strip(),"red"))
+                print("["+colored("NMAP","yellow")+"]["+colored("HOSTERR","red")+"]")
+                print("-----")
             else:
-                print(colored(output.strip(),"green"))
+                print("["+colored("mapper.py","yellow")+"]["+colored("PROGRESS","yellow")+"]" + colored(str(progressIP/len(ipList)*100),"blue") + colored("%","blue"))
+                print("["+colored("OK","green")+"]["+colored("IP","yellow")+"]time taken for execution "+str(time.time()-subnetTime)+"s")
+                #print(colored(output.strip(),"green"))
                 findPort = re.findall(r"%s/tcp" % mapPort,output)
                 if bool(findPort): 
                     print("["+colored("NMAP","yellow")+"]"+colored('Found '+mapPort+' here',"blue"))
                     outputFile = open(fileName,"a")
                     outputFile.write(str(ipList[i])+" ")
                     outputFile.close()
+                print("-----")
             if return_code is not None:
                 break
     print("["+colored("mapper.py","yellow")+"]["+colored("PROGRESS","yellow")+"]" + colored(str(progress/count*100),"blue") + colored("%","blue"))
