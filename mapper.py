@@ -22,6 +22,8 @@ for k in ipNets:
     ipList = []
     for ip in ipaddress.IPv4Network(k):
         ipList.append(ip)
+    print("["+colored("mapper.py","yellow")+"]["+colored("PROGRESS","yellow")+"]" + colored(str(progress/count*100),"blue") + colored("%","blue"))
+    print("["+colored("OK","green")+"]["+colored("SUBNET","yellow")+"]time taken for execution "+str(time.time()-subnetTime)+"s")
     for i in range(0,len(ipList)):    
         args = str(ipList[i])
         print("["+colored("mapper.py","yellow")+"]["+colored("EXEC","yellow")+"]"+colored(" nmap "+args,"green"))
@@ -29,7 +31,7 @@ for k in ipNets:
         try:
             stdout, stderr = shell.communicate(timeout=30)
         except:
-            print(colored("BROKE DUE TO TIMEOUT","red"))
+            print("["+colored("SHELL","yellow")+"]"+colored("BROKE DUE TO TIMEOUT","red"))
             continue
         while True:
             return_code = shell.poll()
@@ -47,7 +49,6 @@ for k in ipNets:
                     outputFile.close()
             if return_code is not None:
                 break
-    print("current progress " + colored(str(progress/count*100),"blue") + colored("%","blue"))
+    print("["+colored("mapper.py","yellow")+"]["+colored("PROGRESS","yellow")+"]" + colored(str(progress/count*100),"blue") + colored("%","blue"))
     print("["+colored("OK","green")+"]["+colored("SUBNET","yellow")+"]time taken for execution "+str(time.time()-subnetTime)+"s")
-
 print("["+colored("OK","green")+"]["+colored("mapper.py","yellow")+"] time taken for execution "+str(time.time()-startTime)+"s")
