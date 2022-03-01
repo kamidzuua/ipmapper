@@ -15,10 +15,11 @@ That output file can be used for DDoS using simple bash scripts.
 ```python
 from termcolor import colored 
 from bs4 import BeautifulSoup
+import keyboard
 ```
 
 ### usage
 
 * download page from bgp.he.net and save it in repository folder as ru - bgp.he.net.html
 * ``` ./run.sh ```
-* enter port of interes when prompted
+* enter port of interest when prompted

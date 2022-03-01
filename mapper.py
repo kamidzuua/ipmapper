@@ -4,6 +4,7 @@ import ipaddress
 import re
 import time
 import _thread
+import keyboard
 
 def runIP(args,fileName): 
         print("["+colored("mapper.py","yellow")+"]["+colored("EXEC","yellow")+"]"+colored(" nmap "+args,"green"))
@@ -29,7 +30,6 @@ def runIP(args,fileName):
                     outputFile.write(str(ipList[i])+" ")
             if return_code is not None:
                 break
-
 
 
 print(colored("Which port you are looking for?","yellow"))
@@ -61,7 +61,7 @@ for k in ipNets:
         try:
             _thread.start_new_thread(runIP,(args,fileName))
         except:
-            print(colored("THREAD ERROR","read"))
+            print(colored("THREAD ERROR","red"))
         time.sleep(0.1)
     time.sleep(5)
     print("------------------------")
