@@ -23,12 +23,10 @@ def runIP(args,fileName):
             else:
                 print("["+colored("OK","green")+"]["+colored(args,"yellow")+"]time taken for execution "+str(time.time()-subnetTime)+"s")
                 #print(colored(output.strip(),"green"))
-                findPort = re.findall(r"%s/tcp" % mapPort,output)
+                findPort = re.findall(openReg,output)
                 if bool(findPort): 
                     print("["+colored("NMAP","yellow")+"]["+colored(args,"yellow")+"]"+colored('Found '+mapPort+' here',"blue"))
-                    outputFile = open(fileName,"a")
                     outputFile.write(str(ipList[i])+" ")
-                    outputFile.close()
             if return_code is not None:
                 break
 
@@ -36,13 +34,18 @@ def runIP(args,fileName):
 
 print(colored("Which port you are looking for?","yellow"))
 mapPort = input()
+if len(mapPort) == 2:
+    openReg = r"%s/tcp   open" % mapPort
+elif len(mapPort) ==3:
+    openReg = r"%s/tcp  open" % mapPort
+elif len(mapPort):
+    openReg = r"%s/tcp open" % mapPort
 startTime = time.time() 
 fileName = "output"+mapPort+".txt"
 listFile = open("list.txt","r")
 ipNets = listFile.read().split(' ')
 listFile.close()
 outputFile = open(fileName,"w")
-outputFile.close()
 count = len(ipNets)
 progress = 0
 
@@ -59,7 +62,7 @@ for k in ipNets:
             _thread.start_new_thread(runIP,(args,fileName))
         except:
             print(colored("THREAD ERROR","read"))
-        time.sleep(0.33)
+        time.sleep(0.1)
     time.sleep(5)
     print("------------------------")
     print("["+colored("mapper.py","yellow")+"]["+colored("PROGRESS","yellow")+"]" + colored(str(progress/count*100),"blue") + colored("%","blue"))
@@ -67,3 +70,5 @@ for k in ipNets:
     print("------------------------")
     time.sleep(5) 
 print("["+colored("OK","green")+"]["+colored("mapper.py","yellow")+"] time taken for execution "+str(time.time()-startTime)+"s")
+
+outputFile.close()
