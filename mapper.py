@@ -17,8 +17,9 @@ def totalIPcount(nets):
 
 
 def countETA(progress):
+    global progressIPglobal
     timeIP = (time.time()-startTime)/progress
-    ipLeft = ipTotal-progress
+    ipLeft = ipTotal-progressIPglobal
     return str(datetime.timedelta(seconds=round((ipLeft/timeIP))))
 
 def runIP(args,fileName): 
@@ -64,7 +65,7 @@ startTime = time.time()
 fileName = "output"+mapPort+".txt"
 listFile = open("list.txt","r")
 
-ipNets = listFile.read().split(' ')
+ipNets = listFile.read().rstrip("\n").split(' ')
 listFile.close()
 ipTotal = totalIPcount(ipNets)
 print("Total IP count: "+colored(ipTotal,"green"))
