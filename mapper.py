@@ -5,6 +5,21 @@ import re
 import time
 import _thread
 import keyboard
+import datetime
+
+def totalIPcount(nets):
+    listed = []
+    for net in nets:
+        if bool(net) is not False:
+            for ip in ipaddress.IPv4Network(net):
+                listed.append(ip)
+    return len(listed)
+
+
+def countETA(progress):
+    timeIP = (time.time()-startTime)/progress
+    ipLeft = ipTotal-progress
+    return str(datetime.timedelta(seconds=round((ipLeft/timeIP))))
 
 def runIP(args,fileName): 
         print("["+colored("mapper.py","yellow")+"]["+colored("EXEC","yellow")+"]"+colored(" nmap "+args,"green"))
@@ -17,6 +32,9 @@ def runIP(args,fileName):
         while True:
             return_code = shell.poll()
             output = stdout
+            global progressIPglobal
+            global openReg
+            progressIPglobal+=1
             downDetector = re.findall(r'Host seems down.',output)
             if bool(downDetector):
                 #print(colored(output.strip(),"red"))
@@ -34,24 +52,34 @@ def runIP(args,fileName):
 
 print(colored("Which port you are looking for?","yellow"))
 mapPort = input()
+
 if len(mapPort) == 2:
     openReg = r"%s/tcp   open" % mapPort
 elif len(mapPort) ==3:
     openReg = r"%s/tcp  open" % mapPort
 elif len(mapPort):
     openReg = r"%s/tcp open" % mapPort
+
 startTime = time.time() 
 fileName = "output"+mapPort+".txt"
 listFile = open("list.txt","r")
+
 ipNets = listFile.read().split(' ')
 listFile.close()
+ipTotal = totalIPcount(ipNets)
+print("Total IP count: "+colored(ipTotal,"green"))
+time.sleep(3)
+
 outputFile = open(fileName,"w")
+outputFile.close()
 count = len(ipNets)
 progress = 0
+progressIPglobal = 1
 
 for k in ipNets:
+    outputFile = open(fileName,"w")
     progress+=1
-    progressIP = 0
+    progressIP = 1
     subnetTime=time.time()
     ipList = []
     for ip in ipaddress.IPv4Network(k):
@@ -60,6 +88,7 @@ for k in ipNets:
         args = str(ipList[i])
         try:
             _thread.start_new_thread(runIP,(args,fileName))
+            print(colored(countETA(progressIPglobal),"green"))
         except:
             print(colored("THREAD ERROR","red"))
         time.sleep(0.1)
@@ -68,7 +97,8 @@ for k in ipNets:
     print("["+colored("mapper.py","yellow")+"]["+colored("PROGRESS","yellow")+"]" + colored(str(progress/count*100),"blue") + colored("%","blue"))
     print("["+colored("OK","green")+"]["+colored("SUBNET","yellow")+"]["+colored(k,"yellow")+"] "+str((time.time()-subnetTime)/60)+"m")
     print("------------------------")
-    time.sleep(5) 
+    time.sleep(5)
+    outputFile.close()
 print("["+colored("OK","green")+"]["+colored("mapper.py","yellow")+"] time taken for execution "+str(time.time()-startTime)+"s")
 
 outputFile.close()
