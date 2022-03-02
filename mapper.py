@@ -24,6 +24,8 @@ def countETA(progress):
 
 def runIP(args,fileName): 
         print("["+colored("mapper.py","yellow")+"]["+colored("EXEC","yellow")+"]"+colored(" nmap "+args,"green"))
+        global progressIPglobal
+        progressIPglobal+=1
         shell = subprocess.Popen(['nmap',args] ,stdout=subprocess.PIPE,stderr=subprocess.PIPE,universal_newlines=True)
         try:
             stdout, stderr = shell.communicate(timeout=30)
@@ -33,9 +35,7 @@ def runIP(args,fileName):
         while True:
             return_code = shell.poll()
             output = stdout
-            global progressIPglobal
             global openReg
-            progressIPglobal+=1
             downDetector = re.findall(r'Host seems down.',output)
             if bool(downDetector):
                 #print(colored(output.strip(),"red"))
