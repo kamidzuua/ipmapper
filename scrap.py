@@ -1,6 +1,6 @@
-import sys
-import time
-import requests
+"""
+declare imports
+"""
 import time
 from bs4 import BeautifulSoup
 from termcolor import colored

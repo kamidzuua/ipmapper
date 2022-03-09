@@ -4,6 +4,7 @@
 
 ipmapper is python script purpose of which is to run nmap for list of ips and put port of interest into output file. 
 That output file can be used for DDoS using simple bash scripts.
+Appoximate speed is 870 ip per minute.
 
 ### to do
 - [x] output.txt name will depend on mapping port

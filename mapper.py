@@ -1,13 +1,21 @@
+"""
+declare imports
+"""
+
 import subprocess
-from termcolor import colored
 import ipaddress
 import re
 import time
 import _thread
-import keyboard
 import datetime
+from termcolor import colored
+
 
 def totalIPcount(nets):
+    """
+    define totalIPcount function
+    returns total number of IPs through all subnets
+    """
     listed = []
     for net in nets:
         if bool(net) is not False:
@@ -17,38 +25,48 @@ def totalIPcount(nets):
 
 
 def countETA(progress):
+    """
+    define countETA function
+    returns estimated processing time
+    """
     global progressIPglobal
     timeIP = (time.time()-startTime)/progress
     ipLeft = ipTotal-progressIPglobal
     return str(datetime.timedelta(seconds=round((ipLeft/timeIP))))
 
 def runIP(args,fileName): 
-        print("["+colored("mapper.py","yellow")+"]["+colored("EXEC","yellow")+"]"+colored(" nmap "+args,"green"))
-        global progressIPglobal
-        progressIPglobal+=1
-        shell = subprocess.Popen(['nmap',args] ,stdout=subprocess.PIPE,stderr=subprocess.PIPE,universal_newlines=True)
-        try:
-            stdout, stderr = shell.communicate(timeout=30)
-        except:
-            print("["+colored("SHELL","yellow")+"]["+colored(args,"yellow")+"]"+colored("BROKE DUE TO TIMEOUT","red"))
-            #continue
-        while True:
-            return_code = shell.poll()
-            output = stdout
-            global openReg
-            downDetector = re.findall(r'Host seems down.',output)
-            if bool(downDetector):
-                #print(colored(output.strip(),"red"))
-                print("["+colored("NMAP","yellow")+"]["+colored(args,"yellow")+"]["+colored("HOSTERR","red")+"]")
-            else:
-                print("["+colored("OK","green")+"]["+colored(args,"yellow")+"]time taken for execution "+str(time.time()-subnetTime)+"s")
-                #print(colored(output.strip(),"green"))
-                findPort = re.findall(openReg,output)
-                if bool(findPort): 
-                    print("["+colored("NMAP","yellow")+"]["+colored(args,"yellow")+"]"+colored('Found '+mapPort+' here',"blue"))
-                    outputFile.write(str(ipList[i])+" ")
-            if return_code is not None:
-                break
+    """
+    define runIP function
+    is running inside of the thread
+    returns nothing
+    prints logs
+    """
+    print("["+colored("mapper.py","yellow")+"]["+colored("EXEC","yellow")+"]"+colored(" nmap "+args,"green"))
+    global progressIPglobal
+    progressIPglobal+=1
+    shell = subprocess.Popen(['nmap',args] ,stdout=subprocess.PIPE,stderr=subprocess.PIPE,universal_newlines=True)
+    try:
+        stdout, stderr = shell.communicate(timeout=30)
+    except:
+        print("["+colored("SHELL","yellow")+"]["+colored(args,"yellow")+"]"+colored("BROKE DUE TO TIMEOUT","red"))
+        #continue
+    while True:
+        return_code = shell.poll()
+        output = stdout
+        global openReg
+        downDetector = re.findall(r'Host seems down.',output)
+        if bool(downDetector):
+            #print(colored(output.strip(),"red"))
+            print("["+colored("NMAP","yellow")+"]["+colored(args,"yellow")+"]["+colored("HOSTERR","red")+"]")
+        else:
+            print("["+colored("OK","green")+"]["+colored(args,"yellow")+"]time taken for execution "+str(time.time()-subnetTime)+"s")
+            #print(colored(output.strip(),"green"))
+            findPort = re.findall(openReg,output)
+            if bool(findPort): 
+                print("["+colored("NMAP","yellow")+"]["+colored(args,"yellow")+"]"+colored('Found '+mapPort+' here',"blue"))
+                outputFile.write(str(ipList[i])+" ")
+        if return_code is not None:
+            break
 
 
 print(colored("Which port you are looking for?","yellow"))
@@ -61,7 +79,7 @@ elif len(mapPort) ==3:
 elif len(mapPort):
     openReg = r"%s/tcp open" % mapPort
 
-startTime = time.time() 
+startTime = time.time()
 fileName = "output"+mapPort+".txt"
 listFile = open("list.txt","r")
 
