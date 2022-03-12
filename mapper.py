@@ -1,7 +1,7 @@
 """
 declare imports
 """
-
+import time
 import subprocess
 import ipaddress
 import re
@@ -19,6 +19,7 @@ class Mapper:
         self.openReg = self.__getOpenReg(mapPort)
         self.progressIPglobal = 0
         self.ipList = []
+        self.speedAVG = 25.6
 
     def getIPinfo(self):
         """
@@ -35,10 +36,14 @@ class Mapper:
         """
         define countETA function
         returns estimated processing time
+        t=S/v
         """
-        timeIP = 25.6
+        #timeIP = 25.6
+        DEATHadder = self.progressIPglobal/(time.time() - self.startTime)
+        self.speedAVG = round(DEATHadder+self.speedAVG)/2
+        print(self.speedAVG)
         ipLeft = ipTotal - self.progressIPglobal
-        return str(datetime.timedelta(seconds=round(ipLeft / timeIP, 1)))
+        return str(datetime.timedelta(seconds=round(ipLeft / self.speedAVG, 1)))
 
     def runIP(self, args, ):
         """
