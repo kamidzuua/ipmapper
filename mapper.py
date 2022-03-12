@@ -6,118 +6,87 @@ import subprocess
 import ipaddress
 import re
 import time
-import _thread
 import datetime
 from termcolor import colored
 
 
-def totalIPcount(nets):
-    """
-    define totalIPcount function
-    returns total number of IPs through all subnets
-    """
-    listed = []
-    for net in nets:
-        if bool(net) is not False:
-            for ip in ipaddress.IPv4Network(net):
-                listed.append(ip)
-    return len(listed)
+class Mapper:
 
+    def __init__(self, mapPort, startTime, inputFile, outputFile):
+        self.inputFile = inputFile
+        self.startTime = startTime
+        self.outputFile = outputFile
+        self.mapPort = mapPort
+        self.openReg = self.__getOpenReg(mapPort)
+        self.progressIPglobal = 0
+        self.ipList = []
 
-def countETA(progress):
-    """
-    define countETA function
-    returns estimated processing time
-    """
-    global progressIPglobal
-    timeIP = (time.time()-startTime)/progress
-    ipLeft = ipTotal-progressIPglobal
-    return str(datetime.timedelta(seconds=round((ipLeft/timeIP))))
+    def getIPinfo(self):
+        """
+        define totalIPcount function
+        returns total number of IPs through all subnets
+        """
+        # listed = []
+        # for net in nets:
+        #     if bool(net) is not False:
+        #         for ip in ipaddress.IPv4Network(net):
+        #             listed.append(ip)
+        with open(self.inputFile, 'r') as f:
+            ipNets = f.read().rstrip("\n").split(' ')
+        ipNets = [[ip for ip in ipaddress.IPv4Network(net)] for net in ipNets]
+        ipTotal = sum([len(net) for net in ipNets])
+        # ipTotal = len([ip for net in ipNets if net is not False for ip in (net)])
+        return ipTotal, ipNets
 
-def runIP(args,fileName): 
-    """
-    define runIP function
-    is running inside of the thread
-    returns nothing
-    prints logs
-    """
-    print("["+colored("mapper.py","yellow")+"]["+colored("EXEC","yellow")+"]"+colored(" nmap "+args,"green"))
-    global progressIPglobal
-    progressIPglobal+=1
-    shell = subprocess.Popen(['nmap',args] ,stdout=subprocess.PIPE,stderr=subprocess.PIPE,universal_newlines=True)
-    try:
-        stdout, stderr = shell.communicate(timeout=30)
-    except:
-        print("["+colored("SHELL","yellow")+"]["+colored(args,"yellow")+"]"+colored("BROKE DUE TO TIMEOUT","red"))
-        #continue
-    while True:
-        return_code = shell.poll()
-        output = stdout
-        global openReg
-        downDetector = re.findall(r'Host seems down.',output)
-        if bool(downDetector):
-            #print(colored(output.strip(),"red"))
-            print("["+colored("NMAP","yellow")+"]["+colored(args,"yellow")+"]["+colored("HOSTERR","red")+"]")
-        else:
-            print("["+colored("OK","green")+"]["+colored(args,"yellow")+"]time taken for execution "+str(time.time()-subnetTime)+"s")
-            #print(colored(output.strip(),"green"))
-            findPort = re.findall(openReg,output)
-            if bool(findPort): 
-                print("["+colored("NMAP","yellow")+"]["+colored(args,"yellow")+"]"+colored('Found '+mapPort+' here',"blue"))
-                outputFile.write(str(ipList[i])+" ")
-        if return_code is not None:
-            break
+    def countETA(self, ipTotal):
+        """
+        define countETA function
+        returns estimated processing time
+        """
+        timeIP = 25.6
+        ipLeft = ipTotal - self.progressIPglobal
+        return str(datetime.timedelta(seconds=round(ipLeft / timeIP, 1)))
 
+    def runIP(self, args,):
+        """
+        define runIP function
+        is running inside of the thread
+        returns nothing
+        prints logs
+        """
+        print("[" + colored("mapper.py", "yellow") + "][" + colored("EXEC", "yellow") + "]" + colored(" nmap " + str(args),
+                                                                                                      "green"))
+        stdout, stderr = False, False
 
-print(colored("Which port you are looking for?","yellow"))
-mapPort = input()
-
-if len(mapPort) == 2:
-    openReg = r"%s/tcp   open" % mapPort
-elif len(mapPort) ==3:
-    openReg = r"%s/tcp  open" % mapPort
-elif len(mapPort):
-    openReg = r"%s/tcp open" % mapPort
-
-startTime = time.time()
-fileName = "output"+mapPort+".txt"
-listFile = open("list.txt","r")
-
-ipNets = listFile.read().rstrip("\n").split(' ')
-listFile.close()
-ipTotal = totalIPcount(ipNets)
-print("Total IP count: "+colored(ipTotal,"green"))
-time.sleep(3)
-
-outputFile = open(fileName,"w")
-outputFile.close()
-count = len(ipNets)
-progress = 0
-progressIPglobal = 1
-
-for k in ipNets:
-    outputFile = open(fileName,"w")
-    progress+=1
-    progressIP = 1
-    subnetTime=time.time()
-    ipList = []
-    for ip in ipaddress.IPv4Network(k):
-        ipList.append(ip)
-    for i in range(0,len(ipList)):    
-        args = str(ipList[i])
+        self.progressIPglobal += 1.0
+        shell = subprocess.Popen(['nmap', args], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                 universal_newlines=True)
         try:
-            _thread.start_new_thread(runIP,(args,fileName))
-            print(colored(countETA(progressIPglobal),"green"))
+            stdout, stderr = shell.communicate(timeout=30)
         except:
-            print(colored("THREAD ERROR","red"))
-        time.sleep(0.1)
-    time.sleep(5)
-    print("------------------------")
-    print("["+colored("mapper.py","yellow")+"]["+colored("PROGRESS","yellow")+"]" + colored(str(progress/count*100),"blue") + colored("%","blue"))
-    print("["+colored("OK","green")+"]["+colored("SUBNET","yellow")+"]["+colored(k,"yellow")+"] "+str((time.time()-subnetTime)/60)+"m")
-    print("------------------------")
-    time.sleep(5)
-    outputFile.close()
-print("["+colored("OK","green")+"]["+colored("mapper.py","yellow")+"] time taken for execution "+str(time.time()-startTime)+"s")
+            print("[" + colored("SHELL", "yellow") + "][" + colored(args, "yellow") + "]" + colored(
+                "BROKE DUE TO TIMEOUT", "red"))
+        while True:
+            return_code = shell.poll()
+            output = stdout
+            downDetector = re.findall(r'Host seems down.', output)
+            if downDetector:
+                print("[" + colored("NMAP", "yellow") + "][" + colored(args, "yellow") + "][" + colored("HOSTERR",
+                                                                                                        "red") + "]")
+            else:
+                findPort = re.findall(self.openReg, output)
+                if findPort:
+                    print("[" + colored("NMAP", "yellow") + "][" + colored(args, "yellow") + "]" + colored(
+                        'Found ' + self.mapPort + ' here', "blue"))
+                    with open(self.outputFile, 'a') as f:
+                        f.write(args + " ")
+            if return_code is not None:
+                break
 
-outputFile.close()
+    def __getOpenReg(self, mapPort):
+        if len(mapPort) == 2:
+            return r"%s/tcp   open" % mapPort
+        elif len(mapPort) == 3:
+            return r"%s/tcp  open" % mapPort
+        elif len(mapPort):
+            return r"%s/tcp open" % mapPort
