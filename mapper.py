@@ -5,7 +5,6 @@ declare imports
 import subprocess
 import ipaddress
 import re
-import time
 import datetime
 from termcolor import colored
 
