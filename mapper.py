@@ -25,16 +25,10 @@ class Mapper:
         define totalIPcount function
         returns total number of IPs through all subnets
         """
-        # listed = []
-        # for net in nets:
-        #     if bool(net) is not False:
-        #         for ip in ipaddress.IPv4Network(net):
-        #             listed.append(ip)
         with open(self.inputFile, 'r') as f:
             ipNets = f.read().rstrip("\n").split(' ')
         ipNets = [[ip for ip in ipaddress.IPv4Network(net)] for net in ipNets]
         ipTotal = sum([len(net) for net in ipNets])
-        # ipTotal = len([ip for net in ipNets if net is not False for ip in (net)])
         return ipTotal, ipNets
 
     def countETA(self, ipTotal):
@@ -46,15 +40,16 @@ class Mapper:
         ipLeft = ipTotal - self.progressIPglobal
         return str(datetime.timedelta(seconds=round(ipLeft / timeIP, 1)))
 
-    def runIP(self, args,):
+    def runIP(self, args, ):
         """
         define runIP function
         is running inside of the thread
         returns nothing
         prints logs
         """
-        print("[" + colored("mapper.py", "yellow") + "][" + colored("EXEC", "yellow") + "]" + colored(" nmap " + str(args),
-                                                                                                      "green"))
+        print("[" + colored("mapper.py", "yellow") + "][" + colored("EXEC", "yellow") + "]" + colored(
+            " nmap " + str(args),
+            "green"))
         stdout, stderr = False, False
 
         self.progressIPglobal += 1.0
