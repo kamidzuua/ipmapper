@@ -1,4 +1,3 @@
-import ipaddress
 import time
 import threading
 from termcolor import colored
