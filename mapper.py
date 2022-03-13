@@ -37,6 +37,7 @@ class Mapper:
         define countETA function
         returns estimated processing time
         t=S/v
+        calculating based on speedAVG property(base=25.6)
         """
         #timeIP = 25.6
         DEATHadder = self.progressIPglobal/(time.time() - self.startTime)
