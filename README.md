@@ -15,10 +15,8 @@ Appoximate speed is 870 ip per minute.
 - [ ] scrap bgp.he.net page without download
 
 ### requirements
-```python
-from termcolor import colored 
-from bs4 import BeautifulSoup
-import keyboard
+```bash
+$ python3 -m pip install -r requirements.txt
 ```
 
 ### usage
