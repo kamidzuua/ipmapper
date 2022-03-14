@@ -13,6 +13,7 @@ Appoximate speed is 870 ip per minute.
 - [x] implement threads
 - [ ] mapping few ports simultaneously
 - [ ] scrap bgp.he.net page without download
+- [ ] check to prevent mapping same range few times
 
 ### requirements
 ```bash
