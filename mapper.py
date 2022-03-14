@@ -56,7 +56,7 @@ class Mapper:
         print("[" + colored("mapper.py", "yellow") + "][" + colored("EXEC", "yellow") + "]" + colored(
             " nmap " + str(args),
             "green"))
-        stdout, stderr = False, False
+        stdout, stderr = '', ''
 
         self.progressIPglobal += 1.0
         shell = subprocess.Popen(['nmap', args], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
