@@ -29,7 +29,7 @@ def parse_AS(link):
         print(colored(flag + ' ' + ip, 'green'))
         listFile.write(ip + ' ')
     return
-PATH_TO_GECKODRIVER = "/home/yurii/gecko_driver/geckodriver" # insert path to your geckodriver
+PATH_TO_GECKODRIVER = "geckodriver" # insert path to your geckodriver
 
 listFile = open("list.txt", "w")
 startTime = time.time()

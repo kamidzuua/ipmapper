@@ -22,6 +22,13 @@ $ python3 -m pip install -r requirements.txt
 
 ### usage
 
-* download page from bgp.he.net and save it in repository folder as ru - bgp.he.net.html
-* ``` ./run.sh ```
+* download geckodriver from [](https://github.com/mozilla/geckodriver/releases)
+* put downloaded driver to /usr/local/bin and add it to $PATH
+```bash
+$ sudo mv geckodriver /usr/local/bin 
+$ sudo -s
+$ export PATH=$PATH:/path/to/geckodriver
+```
+* now you can run and have fun
+* ``` $ ./run.sh ```
 * enter port of interest when prompted
